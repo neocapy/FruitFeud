@@ -1,0 +1,26 @@
+{
+  "name": "fruitfeud",
+  "version": "1.0.0",
+  "description": "A game jam submission for Curdle Jam 35 (https://itch.io/jam/curdle-jam-35). `",
+  "homepage": "https://github.com/neocapy/FruitFeud#readme",
+  "bugs": {
+    "url": "https://github.com/neocapy/FruitFeud/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neocapy/FruitFeud.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "vite": "^6.1.0"
+  },
+  "dependencies": {
+    "pixi.js": "^8.7.3"
+  }
+}
