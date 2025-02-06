@@ -1,7 +1,6 @@
-import { Application, Assets, Sprite, Texture, Spritesheet } from 'pixi.js';
-import * as PIXI from 'pixi.js';
+import { Assets, Sprite, Texture, Spritesheet } from 'pixi.js';
 
-import Tiles01 from './tiles-01.png';
+import Tiles01 from './assets/tiles-01.png';
 
 class AtlasInfo {
   constructor(
@@ -35,11 +34,26 @@ const TILE_INFOS = [
   new TileInfo(0, 4, 0, 1, 1, 'border-thick-bottom'),
   new TileInfo(0, 5, 0, 1, 1, 'solid'),
   new TileInfo(0, 6, 0, 1, 1, 'MISSINGTEX'),
-  new TileInfo(0, 0, 1, 3, 1, 'uwu'),
-  new TileInfo(0, 0, 2, 2, 2, 'owo'),
+
+  new TileInfo(0, 0, 1, 1, 1, 'board-00'),
+  new TileInfo(0, 1, 1, 1, 1, 'board-01'),
+  new TileInfo(0, 2, 1, 1, 1, 'board-02'),
+  new TileInfo(0, 0, 2, 1, 1, 'board-10'),
+  new TileInfo(0, 1, 2, 1, 1, 'board-11'),
+  new TileInfo(0, 2, 2, 1, 1, 'board-12'),
+  new TileInfo(0, 0, 3, 1, 1, 'board-20'),
+  new TileInfo(0, 1, 3, 1, 1, 'board-21'),
+  new TileInfo(0, 2, 3, 1, 1, 'board-22'),
+
+  new TileInfo(0, 0, 4, 1, 1, 'paint-big-0'),
+  new TileInfo(0, 1, 4, 1, 1, 'paint-big-1'),
+  new TileInfo(0, 0, 5, 1, 1, 'paint-small-0'),
+  new TileInfo(0, 1, 5, 1, 1, 'paint-small-1'),
+  new TileInfo(0, 2, 5, 1, 1, 'paint-small-2'),
+  new TileInfo(0, 3, 5, 1, 1, 'paint-small-3'),
 ];
 
-class TileAtlas {
+export class TileAtlas {
   private _nameMap: Map<string, Texture> = new Map();
   private _sheets: Spritesheet[] = [];
 
@@ -81,7 +95,7 @@ class TileAtlas {
     }
   }
 
-  get(name: string): Texture {
+  getTexture(name: string): Texture {
     const texture = this._nameMap.get(name);
     if (!texture) {
       console.error('Failed to get texture:', name);
@@ -93,71 +107,12 @@ class TileAtlas {
     }
     return texture;
   }
-}
 
-
-class FruitGame {
-  public app: Application;
-  public bunny: Sprite | null = null;
-  public atlas: TileAtlas = new TileAtlas();
-
-  constructor() {
-    this.app = new Application();
-  }
-
-  private everyFrameTick(ticker: PIXI.Ticker): void {
-    if (!this.bunny) return;
-
-    const deltaMS = ticker.deltaMS;
-    this.bunny.rotation += 0.1 * (deltaMS / 1000);
-
-    const elapsedTimeSeconds = ticker.lastTime / 1000;
-    const angle = (2 * Math.PI * elapsedTimeSeconds) / 5;
-    const scaleValue = 2 + Math.sin(angle);
-    this.bunny.scale.set(scaleValue);
-  }
-
-  async init(): Promise<void> {
-    const containerEl = document.querySelector(".container") as HTMLDivElement;
-
-    await this.app.init({
-      backgroundColor: 0x1099bb,
-      resizeTo: containerEl,
-      resolution: window.devicePixelRatio || 1,
-      depth: true,
-    });
-    containerEl.appendChild(this.app.canvas);
-
-    await this.atlas.load();
-
-    this.bunny = new Sprite(this.atlas.get('solid'));
-    this.bunny.anchor.set(0.5);
-    this.bunny.x = this.app.screen.width / (2 * window.devicePixelRatio);
-    this.bunny.y = this.app.screen.height / (2 * window.devicePixelRatio);
-    
-
-    this.app.stage.addChild(this.bunny);
-
-    // Use the separate ticker function for frame updates.
-    this.app.ticker.add(this.everyFrameTick.bind(this));
-  }
-
-  destroy(): void {
-    this.app.destroy();
+  createSprite(texName: string, anchorX = 0.0, anchorY = 0.0, tint: number = 0xFFFFFF): Sprite {
+    const sprite = new Sprite(this.getTexture(texName));
+    sprite.anchor.set(anchorX, anchorY);
+    sprite.tint = tint;
+    sprite.scale.set(1/16, 1/16);
+    return sprite;
   }
 }
-
-declare global {
-  interface Window {
-    fruitGame: FruitGame | undefined;
-  }
-}
-
-async function main(): Promise<void> {
-  const fruitGame = new FruitGame();
-  window.fruitGame = fruitGame;
-  await fruitGame.init();
-}
-
-main();
-
